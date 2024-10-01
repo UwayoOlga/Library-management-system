@@ -3,7 +3,8 @@
                                  -- Data Definition Language (Create tables with constraints.)
                                  -------------------------------------------------------------
 
-           --BOOKS
+           --BOOKS (this is the BOOKS table with columns for book ID, title, author, and published year.
+                   --Constraints: Sets BOOKID as the primary key to ensure it is unique and not null.)
 
 CREATE TABLE "BOOKS" (
     "BOOKID" NUMBER NOT NULL,
@@ -12,7 +13,9 @@ CREATE TABLE "BOOKS" (
     "PUBLISHEDYEAR" DATE NOT NULL,
     CONSTRAINT "BOOKS_PK" PRIMARY KEY ("BOOKID")
 ) ;
-           --LOANS
+           --LOANS (this is the LOANS table for tracking book loans.
+--Constraints: Sets LOANID as the primary key. The BOOKID 
+-- and MEMBERID columns have foreign key constraints that reference the BOOKS and MEMBERS tables, ensuring referential integrity.)
            
 CREATE TABLE "LOANS" (
     "LOANID" NUMBER NOT NULL,
@@ -24,7 +27,9 @@ CREATE TABLE "LOANS" (
     CONSTRAINT "LOANS_FK1" FOREIGN KEY ("BOOKID") REFERENCES "BOOKS" ("BOOKID"),
     CONSTRAINT "LOANS_FK2" FOREIGN KEY ("MEMBERID") REFERENCES "MEMBERS" ("MEMBERID")
 );
-          -- MEMBERS
+          -- MEMBERS 
+--(the MEMBERS table shall store member details.
+--Constraints: Sets MEMBERID as the primary key, ensuring each member has a unique ID)
 
 CREATE TABLE "MEMBERS" (
     "MEMBERID" NUMBER(20,0) NOT NULL,
@@ -40,6 +45,7 @@ CREATE TABLE "MEMBERS" (
 
             -- INSERT DATA
             ---------------
+-- Inserts records into the BOOKS, MEMBERS, and LOANS tables to populate the database with initial data
   -- BOOKS
 INSERT INTO "BOOKS" ("BOOKID", "TITLE", "AUTHOR", "PUBLISHEDYEAR") VALUES (123, 'Half of a Yellow Sun', 'Chimamanda Adichie', TO_DATE('11-SEP-2003', 'DD-MON-YYYY'));
 INSERT INTO "BOOKS" ("BOOKID", "TITLE", "AUTHOR", "PUBLISHEDYEAR") VALUES (12345, 'We Should All Be Feminists', 'Chimamanda Adichie', TO_DATE('23-SEP-2024', 'DD-MON-YYYY'));
@@ -56,7 +62,7 @@ INSERT INTO "LOANS" ("LOANID", "MEMBERID", "BOOKID", "LOANDATE", "RETURNDATE") V
 
 
  --UPDATE ( LET'S UPDATE ONE OF THE LOANIDS)
-
+ -- here a loan record is updated, modifying the MEMBERID, BOOKID, LOANDATE, and RETURNDATE for a specific loan identified by LOANID
 UPDATE "LOANS"
 SET "MEMBERID" = 654,
     "BOOKID" = 1234,
@@ -116,18 +122,18 @@ GRANT CONNECT, RESOURCE TO C##lIBRARIAN1;
                                 --Transaction Control Language(Use transactions to manage changes)
                               ---------------------------------------------------------------------
 
-BEGIN
-    INSERT INTO "BOOKS" ("BOOKID", "TITLE", "AUTHOR", "PUBLISHEDYEAR") 
-    VALUES (3, 'Educated', 'Tara Westover', TO_DATE('20-JUL-2020', 'DD-MON-YYYY'));
-
-    INSERT INTO "MEMBERS" ("MEMBERID", "FIRSTNAME", "LASTNAME") 
-    VALUES (3, 'Alice', 'Smith');
-    COMMIT;
-EXCEPTION
-    WHEN OTHERS THEN
+  BEGIN
+     INSERT INTO "BOOKS" ("BOOKID", "TITLE", "AUTHOR", "PUBLISHEDYEAR")
+     VALUES (3, 'Educated', 'Tara Westover', TO_DATE('20-JUL-2020', 'DD-MON-YYYY'));   
+  
+     INSERT INTO "MEMBERS" ("MEMBERID", "FIRSTNAME", "LASTNAME")
+     VALUES (4, 'Bob', 'Johnson');
+  
+     COMMIT;
+  EXCEPTION
+     WHEN OTHERS THEN
         ROLLBACK;
         DBMS_OUTPUT.PUT_LINE('Transaction failed: ' || SQLERRM);
-END;
-/
-
+  END;
+   /
 
